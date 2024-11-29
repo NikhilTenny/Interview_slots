@@ -54,7 +54,7 @@ class SlotRegisterSerializer(serializers.Serializer):
         return data
     
 class SlotListingSerializer(serializers.Serializer):
-    interviewer_email = serializers.EmailField()
-    candidate_email = serializers.EmailField()
+    interviewer = serializers.IntegerField()
+    candidate = serializers.IntegerField()
 
         
