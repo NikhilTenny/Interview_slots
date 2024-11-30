@@ -3,8 +3,9 @@
 This project is a Django-based application that facilitates the management of interview time slots. It allows candidates and interviewers to register their availability and provides a feature to find overlapping 1-hour time slots for scheduling interviews.
 
 
-## Installation
+## Running the Application
 
+### 1. Running Locally
 Create a virtual environment and activate it:
 
 ```bash
@@ -23,6 +24,23 @@ Run the development server:
 ```bash
 python manage.py runserver
 ```
+The application will now be accessible at http://localhost:8000.
+
+### 2. Running with Docker
+Build the Docker Image:
+
+```bash
+# Use the Dockerfile to build a Docker image for the application
+sudo docker build -t interview_slot_app .
+```
+
+Run the Docker Container
+```bash
+# Start the Docker container using the built image
+sudo docker run -d -p 8000:8000 interview_slot_app
+```
+The application will now be accessible at http://localhost:8000.
+
 
 ## API Endpoints
 
