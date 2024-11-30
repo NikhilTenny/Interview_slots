@@ -22,18 +22,14 @@ class SlotBooking(views.APIView):
 
         serialized_data = serializer.data
         
-        candidate_id, interviewer_id = serialized_data['candidate'], \
-            serialized_data['interviewer']
+        candidate_id, interviewer_id = serialized_data['candidate'], serialized_data['interviewer']
         cand_slot = self.get_user_slot(candidate_id, 'candidate')
         interv_slot = self.get_user_slot(interviewer_id, 'interviewer')
 
         if not cand_slot or not interv_slot:
             return  self.handle_error('Please provide a valid user id.', 400)
 
-        available_slots = self.find_available_slots(
-            cand_slot, interv_slot
-        )
-
+        available_slots = self.find_available_slots(cand_slot, interv_slot)
         if not available_slots:
             response_data = {'result': "Sorry, no slots available."}
         else:
