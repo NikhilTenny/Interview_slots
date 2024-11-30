@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from rest_framework import views, response
+from rest_framework.decorators import api_view
+from rest_framework import views, response, status
 from .serializers import SlotRegisterSerializer, SlotListingSerializer
 from .models import User, TimeSlots
 from datetime import datetime, timedelta
@@ -18,7 +18,7 @@ class SlotBooking(views.APIView):
             error_message = "; ".join(
                 f"{field}: {', '.join(messages)}" for field, messages in serializer.errors.items()
             )
-            return self.handle_error(error_message, 400)
+            return self.handle_error(error_message, status.HTTP_400_BAD_REQUEST)
 
         serialized_data = serializer.data
         
@@ -27,7 +27,7 @@ class SlotBooking(views.APIView):
         interv_slot = self.get_user_slot(interviewer_id, 'interviewer')
 
         if not cand_slot or not interv_slot:
-            return  self.handle_error('Please provide a valid user id.', 400)
+            return  self.handle_error('Please provide a valid user id.', status.HTTP_400_BAD_REQUEST)
 
         available_slots = self.find_available_slots(cand_slot, interv_slot)
         if not available_slots:
@@ -35,7 +35,7 @@ class SlotBooking(views.APIView):
         else:
             response_data = {"result":available_slots}
         
-        return response.Response(response_data, 200)
+        return response.Response(response_data, status.HTTP_200_OK)
     
     def get_user_slot(self, user_id, user_type):
         """
@@ -94,22 +94,22 @@ class SlotBooking(views.APIView):
             error_message = "; ".join(
                 f"{field}: {', '.join(messages)}" for field, messages in serializer.errors.items()
             )
-            return self.handle_error(error_message, 400)
+            return self.handle_error(error_message, status.HTTP_400_BAD_REQUEST)
 
         serialized_data = serializer.data
         user_exists = User.objects.filter(email=serialized_data['email'])
         if user_exists:
-            return self.handle_error("User already exists.", 400)
+            return self.handle_error("User already exists.", status.HTTP_400_BAD_REQUEST)
         else:
             try:    
                 user_obj = self.create_user_record(serialized_data)
                 self.create_timeslot_record(user_obj, serialized_data)
             except Exception:
-                return self.handle_error("Something went wrong.", 500)
+                return self.handle_error("Something went wrong.", status.HTTP_500_INTERNAL_SERVER_ERROR)
             
         result = f"Registration succesfull for user id `{user_obj.id}`"
 
-        return response.Response(data={'result':result})
+        return response.Response(data={'result':result}, status=status.HTTP_201_CREATED)
     
     def handle_error(self, error: str, status: int):
         return response.Response(
@@ -141,3 +141,9 @@ class SlotBooking(views.APIView):
             from_time = serialized_data["from_time"]
         )
         time_slot_obj.save()
+
+
+
+@api_view(['GET'])
+def welcome_view(request):
+    return response.Response({"message": "Welcome to Interview Slot Management System"}, status=status.HTTP_200_OK)

@@ -1,7 +1,8 @@
 from django.urls import path
 
-from .views import SlotBooking
+from .views import SlotBooking, welcome_view
 
 urlpatterns = [
-    path('',SlotBooking.as_view())
+    path('', welcome_view),
+    path('slot', SlotBooking.as_view()),
 ]
