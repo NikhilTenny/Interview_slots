@@ -26,9 +26,9 @@ class SlotRegisterSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=150)
     last_name = serializers.CharField(max_length=150)
     email = serializers.EmailField()
-    date = serializers.DateField()  # Input in YYYY-MM-DD format
-    from_time = serializers.CharField(max_length=8)  # Input as "10:30:PM"
-    to_time = serializers.CharField(max_length=8)  # Input as "11:30:PM"
+    date = serializers.DateField()  
+    from_time = serializers.CharField(max_length=8) 
+    to_time = serializers.CharField(max_length=8)  
     user_type = serializers.ChoiceField(choices=["candidate", "interviewer"])  
 
 

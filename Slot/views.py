@@ -68,10 +68,11 @@ class SlotBooking(views.APIView):
         interv_to_time = interv_slot.to_time
         interv_from_time = interv_slot.from_time
 
+        # Find the mininum start and end time
         overlap_start = max(cand_from_time, interv_from_time)
         overlap_end = min(cand_to_time, interv_to_time)
 
-        # Generate 1-hour slots
+        
         available_slots = []
         current_start = overlap_start
 
@@ -89,9 +90,7 @@ class SlotBooking(views.APIView):
             API to register an interviewer/candidate with necessary details and 
             their available time.
         """
-        #TODO
-        # email validation
-        # logging
+
         req_data = request.data
         serializer = SlotRegisterSerializer(data = req_data)
 
@@ -109,10 +108,12 @@ class SlotBooking(views.APIView):
             try:    
                 user_obj = self.create_user_record(serialized_data)
                 self.create_timeslot_record(user_obj, serialized_data)
-            except Exception as e:
+            except Exception:
                 return self.handle_error("Something went wrong.", 500)
+            
+        result = f"Registration succesfull for user id `{user_obj.id}`"
 
-        return response.Response(data=req_data)
+        return response.Response(data={'result':result})
     
     def handle_error(self, error: str, status: int):
         return response.Response(
